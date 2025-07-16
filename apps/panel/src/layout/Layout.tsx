@@ -8,12 +8,14 @@ import Toolbar from "../components/atoms/toolbar/Toolbar";
 import useLocalStorage from "../hooks/useLocalStorage";
 import {jwtDecode} from "jwt-decode";
 import type {AuthTokenJWTPayload} from "src/types/auth";
+import {useBucket} from "../contexts/BucketContext";
 
 const Layout = () => {
   const [token] = useLocalStorage<string>("token", "");
 
   const [navigatorOpen, setNavigatorOpen] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const {fetchBuckets} = useBucket();
 
   const closeDrawer = () => setIsDrawerOpen(false);
   const openDrawer = () => setIsDrawerOpen(true);
@@ -34,6 +36,10 @@ const Layout = () => {
     const decoded = jwtDecode<AuthTokenJWTPayload>(token);
     return decoded.identifier;
   }, [token]);
+
+  useEffect(() => {
+    fetchBuckets();
+  }, []);
 
   const sideBarElement = (
     <div className={styles.sidebar}>
