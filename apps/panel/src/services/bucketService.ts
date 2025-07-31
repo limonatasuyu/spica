@@ -1,3 +1,4 @@
+import {useCallback} from "react";
 import useApi from "../hooks/useApi";
 import {useEffect, useMemo} from "react";
 
@@ -106,6 +107,33 @@ export const useBucketService = ({currentBucketQuery}: UseBucketServiceOptions =
     });
   };
 
+  const {request: patchRequest} = useApi({endpoint: "/api/bucket", method: "patch"});
+
+  const requestCategoryChange = useCallback((bucketId: string, category: string) => {
+    return patchRequest({body: {category}, endpoint: `/api/bucket/${bucketId}`});
+  }, []);
+
+  const {
+    request: bucketOrderRequest,
+    loading: bucketOrderLoading,
+    error: bucketOrderError
+  } = useApi({endpoint: "", method: "patch"});
+
+  const changeBucketOrder = useCallback((bucketId: string, order: number) => {
+    bucketOrderRequest({endpoint: `/api/bucket/${bucketId}`, body: {order}});
+  }, []);
+
+  const {request: deleteRequest} = useApi({
+    endpoint: "",
+    method: "delete"
+  });
+
+  const deleteBucketRequest = useCallback((bucketId: string) => {
+    return deleteRequest({
+      endpoint: `/api/bucket/${bucketId}`
+    });
+  }, []);
+
   return {
     buckets,
     fetchBuckets,
@@ -114,6 +142,11 @@ export const useBucketService = ({currentBucketQuery}: UseBucketServiceOptions =
     currentBucket,
     getCurrentBucket,
     currentBucketLoading,
-    currentBucketError
+    currentBucketError,
+    requestCategoryChange,
+    changeBucketOrder,
+    bucketOrderLoading,
+    bucketOrderError,
+    deleteBucketRequest
   };
 };
